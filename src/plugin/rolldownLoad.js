@@ -128,14 +128,6 @@ export async function rolldownLoad(state, config, ctx, id) {
       return null
     }
 
-    const emittedFileName = `${config.outputFolder ? `${config.outputFolder}/` : ''}${workerID}`
-
-    ctx.emitFile({
-      type: 'chunk',
-      id: target,
-      fileName: emittedFileName,
-    })
-
     if (config.inline || config.targetPlatform === 'base64') {
       const source = extractSource(chunk.code, config.preserveSource)
       let map = null
@@ -152,6 +144,14 @@ export async function rolldownLoad(state, config, ctx, id) {
         }),
       }
     }
+
+    const emittedFileName = `${config.outputFolder ? `${config.outputFolder}/` : ''}${workerID}`
+
+    ctx.emitFile({
+      type: 'chunk',
+      id: target,
+      fileName: emittedFileName,
+    })
 
     const relativePath = `./${emittedFileName}`
     return {
