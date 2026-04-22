@@ -8,11 +8,12 @@ const externals = [
   ...Object.keys(pkg.peerDependencies || {}),
   ...builtinModules,
   ...builtinModules.map(module => `node:${module}`),
+  'require',
 ]
 
 const config = defineConfig([
   {
-    input: './src/index.ts',
+    input: './src/index.js',
     output: {
       dir: './dist',
       format: 'esm',
@@ -25,7 +26,7 @@ const config = defineConfig([
     treeshake: true,
   },
   {
-    input: './src/index.ts',
+    input: './src/index.js',
     output: {
       dir: './dist',
       format: 'cjs',
@@ -38,7 +39,7 @@ const config = defineConfig([
     treeshake: true,
   },
   {
-    input: './src/index.ts',
+    input: './src/index.js',
     output: {
       dir: './dist',
       format: 'esm',

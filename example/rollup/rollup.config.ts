@@ -1,6 +1,6 @@
 import { defineConfig } from 'rollup';
 import typescript from '@rollup/plugin-typescript';
-import { webWorkerLoader } from '../../src/index';
+import webWorkerLoader from '@baicie/web-worker-inline';
 
 export default defineConfig({
     input: './src/main.ts',

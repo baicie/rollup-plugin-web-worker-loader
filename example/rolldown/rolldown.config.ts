@@ -1,5 +1,5 @@
 import { defineConfig } from 'rolldown';
-import { webWorkerLoader } from '../../src';
+import { webWorkerLoader } from '@baicie/web-worker-inline';
 
 export default defineConfig({
     input: './src/main.ts',

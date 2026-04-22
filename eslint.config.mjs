@@ -14,6 +14,7 @@ export default antfu(
       'example',
       'gulpfile.js',
       'tests',
+      'src',
     ],
   },
   {

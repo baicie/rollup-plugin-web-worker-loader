@@ -10,7 +10,7 @@
     "dependencies": {},
     "devDependencies": {
         "rolldown": "^1.0.0-rc.16",
-        "rollup-plugin-web-worker-loader": "workspace:*",
+        "@baicie/web-worker-inline": "workspace:*",
         "typescript": "^5.6.0"
     }
 }
