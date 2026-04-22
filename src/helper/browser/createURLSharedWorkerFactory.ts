@@ -1,7 +1,9 @@
 export function createURLSharedWorkerFactory(
-    url: string,
+  url: string,
 ): (options?: SharedWorkerOptions) => SharedWorker {
-    return function SharedWorkerFactory(options?: SharedWorkerOptions): SharedWorker {
-        return new SharedWorker(url, options);
-    };
+  return function SharedWorkerFactory(
+    options?: SharedWorkerOptions,
+  ): SharedWorker {
+    return new SharedWorker(url, options)
+  }
 }

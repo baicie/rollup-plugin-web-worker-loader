@@ -1,24 +1,35 @@
-type WorkerModule = typeof import('worker_threads');
-type WorkerConstructor = new (script: string | URL, options?: object) => Worker;
+import type { Worker as WorkerThreadsWorker } from 'node:worker_threads'
+import process from 'node:process'
 
-declare const __non_webpack_require__: ((id: string) => unknown) | undefined;
+type WorkerConstructor = new (
+  script: string | URL,
+  options?: object,
+) => Worker
 
-let WorkerClass: WorkerConstructor | null = null;
+declare const __non_webpack_require__: ((id: string) => unknown) | undefined
 
-if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
+const WorkerClass: WorkerConstructor | null = (() => {
+  if (
+    typeof process !== 'undefined'
+    && Object.prototype.toString.call(process) === '[object process]'
+  ) {
     try {
-        let mod: WorkerModule | null = null;
-        if (typeof module !== 'undefined' && typeof module.require === 'function') {
-            mod = module.require('worker_threads') as WorkerModule;
-        } else if (typeof __non_webpack_require__ === 'function') {
-            mod = __non_webpack_require__('worker_threads') as WorkerModule;
-        } else if (typeof require === 'function') {
-            mod = require('worker_threads') as WorkerModule;
-        }
-        if (mod) {
-            WorkerClass = mod.Worker as unknown as WorkerConstructor;
-        }
-    } catch (_e) { }
-}
+      let mod: WorkerThreadsWorker | null = null
+      if (typeof module !== 'undefined' && typeof module.require === 'function') {
+        mod = module.require('worker_threads') as unknown as WorkerThreadsWorker
+      }
+      else if (typeof __non_webpack_require__ === 'function') {
+        mod = __non_webpack_require__('worker_threads') as unknown as WorkerThreadsWorker
+      }
+      if (mod) {
+        return mod.Worker as unknown as WorkerConstructor
+      }
+    }
+    catch {
+      /* EMPTY */
+    }
+  }
+  return null
+})()
 
-export { WorkerClass };
+export { WorkerClass }

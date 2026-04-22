@@ -21,41 +21,36 @@ pnpm add rollup-plugin-web-worker-loader --save-dev
 ### With Rollup
 
 ```typescript
+import typescript from '@rollup/plugin-typescript'
 // rollup.config.ts
-import { defineConfig } from 'rollup';
-import typescript from '@rollup/plugin-typescript';
-import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+import { defineConfig } from 'rollup'
+import webWorkerLoader from 'rollup-plugin-web-worker-loader'
 
 export default defineConfig({
-    input: 'src/main.ts',
-    output: {
-        file: 'dist/bundle.js',
-        format: 'esm',
-    },
-    plugins: [
-        webWorkerLoader(),
-        typescript(),
-    ],
-});
+  input: 'src/main.ts',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'esm',
+  },
+  plugins: [webWorkerLoader(), typescript()],
+})
 ```
 
 ### With Rolldown
 
 ```typescript
 // rolldown.config.ts
-import { defineConfig } from 'rolldown';
-import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+import { defineConfig } from 'rolldown'
+import webWorkerLoader from 'rollup-plugin-web-worker-loader'
 
 export default defineConfig({
-    input: 'src/main.ts',
-    output: {
-        file: 'dist/bundle.js',
-        format: 'esm',
-    },
-    plugins: [
-        webWorkerLoader(),
-    ],
-});
+  input: 'src/main.ts',
+  output: {
+    file: 'dist/bundle.js',
+    format: 'esm',
+  },
+  plugins: [webWorkerLoader()],
+})
 ```
 
 ## Import Pattern
@@ -63,85 +58,85 @@ export default defineConfig({
 Import web workers using the `web-worker:` prefix (or custom pattern):
 
 ```typescript
-import DataWorker from 'web-worker:./DataWorker';
+import DataWorker from 'web-worker:./DataWorker'
 
-const worker = new DataWorker();
-worker.postMessage('Hello World!');
+const worker = new DataWorker()
+worker.postMessage('Hello World!')
 ```
 
 ## Configuration Options
 
 ```typescript
-import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+import webWorkerLoader from 'rollup-plugin-web-worker-loader'
 
 webWorkerLoader({
-    // Target platform: 'auto', 'browser', 'node', or 'base64'
-    // Default: 'auto'
-    targetPlatform: 'auto',
+  // Target platform: 'auto', 'browser', 'node', or 'base64'
+  // Default: 'auto'
+  targetPlatform: 'auto',
 
-    // Pattern to match web worker imports
-    // Default: /web-worker:(.+)/
-    webWorkerPattern: /web-worker:(.+)/,
+  // Pattern to match web worker imports
+  // Default: /web-worker:(.+)/
+  webWorkerPattern: /web-worker:(.+)/,
 
-    // Pattern to match audio worklet imports
-    // Default: /audio-worklet:(.+)/
-    audioWorkletPattern: /audio-worklet:(.+)/,
+  // Pattern to match audio worklet imports
+  // Default: /audio-worklet:(.+)/
+  audioWorkletPattern: /audio-worklet:(.+)/,
 
-    // Pattern to match paint worklet imports
-    // Default: /paint-worklet:(.+)/
-    paintWorkletPattern: /paint-worklet:(.+)/,
+  // Pattern to match paint worklet imports
+  // Default: /paint-worklet:(.+)/
+  paintWorkletPattern: /paint-worklet:(.+)/,
 
-    // Pattern to match service worker imports
-    // Default: /service-worker:(.+)/
-    serviceWorkerPattern: /service-worker:(.+)/,
+  // Pattern to match service worker imports
+  // Default: /service-worker:(.+)/
+  serviceWorkerPattern: /service-worker:(.+)/,
 
-    // Pattern to match shared worker imports
-    // Default: /shared-worker:(.+)/
-    sharedWorkerPattern: /shared-worker:(.+)/,
+  // Pattern to match shared worker imports
+  // Default: /shared-worker:(.+)/
+  sharedWorkerPattern: /shared-worker:(.+)/,
 
-    // File extensions to try when resolving worker files
-    // Default: ['.js']
-    extensions: ['.js', '.ts'],
+  // File extensions to try when resolving worker files
+  // Default: ['.js']
+  extensions: ['.js', '.ts'],
 
-    // Inline worker code as base64 (or preserve source)
-    // Default: true (inline)
-    inline: true,
+  // Inline worker code as base64 (or preserve source)
+  // Default: true (inline)
+  inline: true,
 
-    // Force code to be inlined every time it's imported
-    // Default: false
-    forceInline: false,
+  // Force code to be inlined every time it's imported
+  // Default: false
+  forceInline: false,
 
-    // Enable source maps for inline workers
-    // Default: false
-    sourcemap: false,
+  // Enable source maps for inline workers
+  // Default: false
+  sourcemap: false,
 
-    // Preserve full source code instead of base64 encoding
-    // Default: false
-    preserveSource: false,
+  // Preserve full source code instead of base64 encoding
+  // Default: false
+  preserveSource: false,
 
-    // Preserve input worker file names when code splitting
-    // Default: false
-    preserveFileNames: false,
+  // Preserve input worker file names when code splitting
+  // Default: false
+  preserveFileNames: false,
 
-    // Enable UTF-16 unicode support (doubles payload size)
-    // Default: false
-    enableUnicode: false,
+  // Enable UTF-16 unicode support (doubles payload size)
+  // Default: false
+  enableUnicode: false,
 
-    // Output folder for worker scripts (when inline: false)
-    // Default: ''
-    outputFolder: 'workers',
+  // Output folder for worker scripts (when inline: false)
+  // Default: ''
+  outputFolder: 'workers',
 
-    // Path prefix for loading worker scripts
-    // Default: ''
-    loadPath: '/js',
+  // Path prefix for loading worker scripts
+  // Default: ''
+  loadPath: '/js',
 
-    // External modules to keep external in worker bundles
-    // Default: undefined
-    external: ['lodash'],
+  // External modules to keep external in worker bundles
+  // Default: undefined
+  external: ['lodash'],
 
-    // Plugin names to skip when building workers
-    // Default: ['liveServer', 'serve', 'livereload']
-    skipPlugins: ['liveServer', 'serve', 'livereload'],
+  // Plugin names to skip when building workers
+  // Default: ['liveServer', 'serve', 'livereload']
+  skipPlugins: ['liveServer', 'serve', 'livereload'],
 })
 ```
 
@@ -150,57 +145,57 @@ webWorkerLoader({
 ### Web Worker
 
 ```typescript
-import MyWorker from 'web-worker:./worker';
+import MyWorker from 'web-worker:./worker'
 
-const worker = new MyWorker();
-worker.postMessage('Hello!');
+const worker = new MyWorker()
+worker.postMessage('Hello!')
 ```
 
 ### Shared Worker
 
 ```typescript
-import SharedWorker from 'shared-worker:./SharedWorker';
+import SharedWorker from 'shared-worker:./SharedWorker'
 
-const shared = new SharedWorker();
-shared.port.postMessage('Hello!');
+const shared = new SharedWorker()
+shared.port.postMessage('Hello!')
 ```
 
 ### Service Worker
 
 ```typescript
-import ServiceWorker from 'service-worker:./ServiceWorker';
+import ServiceWorker from 'service-worker:./ServiceWorker'
 
-ServiceWorker.then(registration => {
-    console.log('Registered:', registration.scope);
-});
+ServiceWorker.then((registration) => {
+  console.log('Registered:', registration.scope)
+})
 ```
 
 ### Audio Worklet
 
 ```typescript
 // Worklet processor
-class MyAudioProcessor extends AudioWorkletProcessor {}
-registerProcessor('my-audio', MyAudioProcessor);
-
 // Consumer
-import registerAudio from 'audio-worklet:./AudioProcessor';
+import registerAudio from 'audio-worklet:./AudioProcessor'
 
-const audioContext = new AudioContext();
-registerAudio(audioContext);
+class MyAudioProcessor extends AudioWorkletProcessor {}
+registerProcessor('my-audio', MyAudioProcessor)
+
+const audioContext = new AudioContext()
+registerAudio(audioContext)
 ```
 
 ### Paint Worklet
 
 ```typescript
 // Worklet
-class MyPainter {}
-registerPaint('my-paint', MyPainter);
-
 // Consumer
-import registerPaint from 'paint-worklet:./Painter';
+import registerPaint from 'paint-worklet:./Painter'
 
-registerPaint();
-CSS.paintWorklet.addModule(url);
+class MyPainter {}
+registerPaint('my-paint', MyPainter)
+
+registerPaint()
+CSS.paintWorklet.addModule(url)
 ```
 
 ## Examples

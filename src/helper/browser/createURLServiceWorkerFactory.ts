@@ -1,7 +1,9 @@
 export function createURLServiceWorkerFactory(
-    url: string,
+  url: string,
 ): (options?: RegistrationOptions) => Promise<ServiceWorkerRegistration> {
-    return function ServiceWorkerFactory(options?: RegistrationOptions): Promise<ServiceWorkerRegistration> {
-        return navigator.serviceWorker.register(url, options);
-    };
+  return function ServiceWorkerFactory(
+    options?: RegistrationOptions,
+  ): Promise<ServiceWorkerRegistration> {
+    return navigator.serviceWorker.register(url, options)
+  }
 }

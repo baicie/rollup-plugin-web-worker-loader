@@ -1,1 +1,1 @@
-export { isNodeJS } from '../auto/isNodeJS.js';
+export { isNodeJS } from '../auto/isNodeJS.js'

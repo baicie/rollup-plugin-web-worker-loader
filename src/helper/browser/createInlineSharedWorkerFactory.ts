@@ -1,12 +1,14 @@
-import { createURL as createWorkerURL } from './createInlineWorkerFactory.js';
+import { createURL as createWorkerURL } from './createInlineWorkerFactory.js'
 
 export function createInlineSharedWorkerFactory(
-    fn: () => void,
-    sourcemapArg?: string | null,
+  fn: () => void,
+  sourcemapArg?: string | null,
 ): () => (options?: SharedWorkerOptions) => SharedWorker {
-    let url: string | undefined;
-    return function SharedWorkerFactory(options?: SharedWorkerOptions): SharedWorker {
-        url = url ?? createWorkerURL(fn, sourcemapArg);
-        return new SharedWorker(url, options);
-    };
+  let url: string | undefined
+  return function SharedWorkerFactory(
+    options?: SharedWorkerOptions,
+  ): SharedWorker {
+    url = url ?? createWorkerURL(fn, sourcemapArg)
+    return new SharedWorker(url, options)
+  }
 }
