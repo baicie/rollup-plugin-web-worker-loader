@@ -1,217 +1,219 @@
 # rollup-plugin-web-worker-loader
 
-Rollup plugin to handle Web Workers, Service Workers, Shared Workers,
-Audio Worklets, and Paint Worklets. Support for Animation Worklets and
-Layout Worklets is in consideration for when implementations are available
-in browsers.
+Rollup/Rolldown plugin to handle Web Workers, Service Workers, Shared Workers, Audio Worklets, and Paint Worklets. Written in TypeScript.
 
-Web Workers are available in Node JS as well as in browsers. All the other
-worklets and workers are available in browsers only, and will throw a runtime
-error if used in Node JS.
+Web Workers are available in Node.js as well as in browsers. All the other worklets and workers are available in browsers only, and will throw a runtime error if used in Node.js.
 
-Can inline the worker code or emit a script file using code-splitting.
-Handles Worker dependencies and can emit source maps.
-Worker dependencies are added to Rollup's watch list.
-Supports bundling workers for Node.js environments
+Supports both **Rollup** (v1-v4) and **Rolldown** (v1+) as bundlers. The plugin automatically detects and uses whichever bundler is available in your project.
 
-### Getting started
+## Installation
 
-```
+```bash
+npm install rollup-plugin-web-worker-loader --save-dev
+# or
 yarn add rollup-plugin-web-worker-loader --dev
+# or
+pnpm add rollup-plugin-web-worker-loader --save-dev
 ```
 
-Add the plugin to your rollup configuration:
+## Usage
 
-```javascript
+### With Rollup
+
+```typescript
+// rollup.config.ts
+import { defineConfig } from 'rollup';
+import typescript from '@rollup/plugin-typescript';
 import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 
-export default {
-    entry: 'src/index.js',
+export default defineConfig({
+    input: 'src/main.ts',
+    output: {
+        file: 'dist/bundle.js',
+        format: 'esm',
+    },
     plugins: [
-        webWorkerLoader(/* configuration */),
+        webWorkerLoader(),
+        typescript(),
     ],
-    format: 'esm',
-};
+});
 ```
 
-#### Web Worker Example
+### With Rolldown
 
-Bundle the worker code using the RegEx pattern specified in the plugin's configuration.
-By default you can add the prefix `web-worker:` to your imports:
+```typescript
+// rolldown.config.ts
+import { defineConfig } from 'rolldown';
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
 
-```javascript
-// here we use the default pattern but any RegEx can be configured
+export default defineConfig({
+    input: 'src/main.ts',
+    output: {
+        file: 'dist/bundle.js',
+        format: 'esm',
+    },
+    plugins: [
+        webWorkerLoader(),
+    ],
+});
+```
+
+## Import Pattern
+
+Import web workers using the `web-worker:` prefix (or custom pattern):
+
+```typescript
 import DataWorker from 'web-worker:./DataWorker';
 
-const dataWorker = new DataWorker();
-dataWorker.postMessage('Hello World!');
+const worker = new DataWorker();
+worker.postMessage('Hello World!');
 ```
 
-#### Shared Worker Example
+## Configuration Options
 
-```javascript
+```typescript
+import webWorkerLoader from 'rollup-plugin-web-worker-loader';
+
+webWorkerLoader({
+    // Target platform: 'auto', 'browser', 'node', or 'base64'
+    // Default: 'auto'
+    targetPlatform: 'auto',
+
+    // Pattern to match web worker imports
+    // Default: /web-worker:(.+)/
+    webWorkerPattern: /web-worker:(.+)/,
+
+    // Pattern to match audio worklet imports
+    // Default: /audio-worklet:(.+)/
+    audioWorkletPattern: /audio-worklet:(.+)/,
+
+    // Pattern to match paint worklet imports
+    // Default: /paint-worklet:(.+)/
+    paintWorkletPattern: /paint-worklet:(.+)/,
+
+    // Pattern to match service worker imports
+    // Default: /service-worker:(.+)/
+    serviceWorkerPattern: /service-worker:(.+)/,
+
+    // Pattern to match shared worker imports
+    // Default: /shared-worker:(.+)/
+    sharedWorkerPattern: /shared-worker:(.+)/,
+
+    // File extensions to try when resolving worker files
+    // Default: ['.js']
+    extensions: ['.js', '.ts'],
+
+    // Inline worker code as base64 (or preserve source)
+    // Default: true (inline)
+    inline: true,
+
+    // Force code to be inlined every time it's imported
+    // Default: false
+    forceInline: false,
+
+    // Enable source maps for inline workers
+    // Default: false
+    sourcemap: false,
+
+    // Preserve full source code instead of base64 encoding
+    // Default: false
+    preserveSource: false,
+
+    // Preserve input worker file names when code splitting
+    // Default: false
+    preserveFileNames: false,
+
+    // Enable UTF-16 unicode support (doubles payload size)
+    // Default: false
+    enableUnicode: false,
+
+    // Output folder for worker scripts (when inline: false)
+    // Default: ''
+    outputFolder: 'workers',
+
+    // Path prefix for loading worker scripts
+    // Default: ''
+    loadPath: '/js',
+
+    // External modules to keep external in worker bundles
+    // Default: undefined
+    external: ['lodash'],
+
+    // Plugin names to skip when building workers
+    // Default: ['liveServer', 'serve', 'livereload']
+    skipPlugins: ['liveServer', 'serve', 'livereload'],
+})
+```
+
+## Supported Worker Types
+
+### Web Worker
+
+```typescript
+import MyWorker from 'web-worker:./worker';
+
+const worker = new MyWorker();
+worker.postMessage('Hello!');
+```
+
+### Shared Worker
+
+```typescript
 import SharedWorker from 'shared-worker:./SharedWorker';
 
-const sharedWorker = new SharedWorker();
-sharedWorker.port.postMessage('Hello World!');
+const shared = new SharedWorker();
+shared.port.postMessage('Hello!');
 ```
 
-#### Service Worker Example
+### Service Worker
 
-```javascript
+```typescript
 import ServiceWorker from 'service-worker:./ServiceWorker';
 
-ServiceWorker.then(function(registration) {
-    console.log('Registration successful, scope is: ', registration.scope);
-})
-.catch(function(error) {
-    console.log('Service worker registration failed, error: ', error);
-}
+ServiceWorker.then(registration => {
+    console.log('Registered:', registration.scope);
+});
 ```
 
-#### Audio Worklet Example
+### Audio Worklet
 
-Audio Worklets require an audio context at instantiation. When you use
-rollup-plugin-web-worker-loader in a browser environment, your import will
-return a constructor to which you can pass an audio context.
-##### Worklet Processor
+```typescript
+// Worklet processor
+class MyAudioProcessor extends AudioWorkletProcessor {}
+registerProcessor('my-audio', MyAudioProcessor);
 
-```javascript
-class MyAudioWorkletProcessor extends AudioWorkletProcessor {
-}
-
-registerProcessor("my-audio-worklet", MyAudioWorkletProcessor);
-```
-
-##### Worklet Consumer
-
-```javascript
-import registerMyAudioWorklet from 'audio-worklet:./MyAudioWorkletFactory';
+// Consumer
+import registerAudio from 'audio-worklet:./AudioProcessor';
 
 const audioContext = new AudioContext();
-registerMyAudioWorklet(audioContext);
-
-class MyAudioWorklet extends AudioWorkletNode {
-    constructor(audioContext) {
-        super(audioContext, "my-audio-worklet"));
-    }
-}
+registerAudio(audioContext);
 ```
 
-#### Paint Worklet Example
+### Paint Worklet
 
-##### Worklet Processor
+```typescript
+// Worklet
+class MyPainter {}
+registerPaint('my-paint', MyPainter);
 
-```javascript
-class MyPaintWorklet {
-    ...
-}
+// Consumer
+import registerPaint from 'paint-worklet:./Painter';
 
-registerPaint('my-paint-worklet', MyPaintWorklet);
+registerPaint();
+CSS.paintWorklet.addModule(url);
 ```
 
-##### Worklet Consumer
+## Examples
 
-```javascript
-import registerMyPaintWorklet from 'paint-worklet:./MyPaintWorkletFactory';
-registerMyPaintWorklet();
-```
+See the `example/` directory for complete examples:
 
-```css
-html {
-    background: paint(my-paint-worklet);
-}
-```
+- `example/rollup/` - Rollup build with TypeScript
+- `example/rolldown/` - Rolldown build example
 
-### Configuration
-The plugin responds to the following configuration options:
-```javascript
-webWorkerLoader({
-    targetPlatform?: string,        // The platform workers should be built for, can be 'auto', 'browser', 'node' or 'base64'.
-                                    // specifying a target platform other than 'auto' reduces the amount of loader code.
-                                    // The `base64` options forces inline and the import results on a base64 string that
-                                    // encodes the worker's source code. NOTE: The string does not include a mime type.
-                                    // 'auto' detectes the target platform and selects between 'browser` and 'node'.
-                                    // Default: 'auto'
+## TypeScript
 
-    web-worker?: RegEx,             // A RegEx instance describing the pattern that matches the files to import as
-                                    // web workers. If capturing groups are present, the plugin uses the contents of the
-                                    // last capturing group as the path to the worker script. Default: /web-worker:(.+)/
+This plugin is written in TypeScript and provides full type definitions.
 
-    shared-worker?: RegEx,          // A RegEx instance describing the pattern that matches the files to import as
-                                    // shared workers. If capturing groups are present, the plugin uses the contents of the
-                                    // last capturing group as the path to the worker script. Default: /shared-worker:(.+)/
+## License
 
-    service-worker?: RegEx,         // A RegEx instance describing the pattern that matches the files to import as
-                                    // service workers. If capturing groups are present, the plugin uses the contents of the
-                                    // last capturing group as the path to the worker script. Default: /service-worker:(.+)/
-
-    audio-worklet?: RegEx,          // A RegEx instance describing the pattern that matches the files to import as
-                                    // audio worklets. If capturing groups are present, the plugin uses the contents of the
-                                    // last capturing group as the path to the worker script. Default: /audio-worklet:(.+)/
-
-    paint-worklet?: RegEx,          // A RegEx instance describing the pattern that matches the files to import as
-                                    // paint worklets. If capturing groups are present, the plugin uses the contents of the
-                                    // last capturing group as the path to the worker script. Default: /paint-worklet:(.+)/
-
-    
-    extensions?: string[],          // An array of strings to use as extensions when resolving worker files.
-                                    // Default: ['.js']
-
-
-    sourcemap?: boolean,            // When inlined, should a source map be included in the final output. Default: false
-
-    inline?: boolean,               // Should the worker code be inlined (Base64). Default: true
-
-    forceInline?: boolean,          // *EXPERIMENTAL* when inlined, forces the code to be included every time it is imported
-                                    // useful when using code splitting: Default: false
-
-    external?: string[],            // *EXPERIMENTAL* override rollup resolution of external module IDs
-                                    // useful to inline external dependencies in a worker blob. Default: undefined
-
-    preserveSource?: boolean,       // When inlined and this option is enabled, the full source code is included in the
-                                    // built file, otherwise it's embedded as a base64 string. Default: false
-    
-    preserveFileNames?: boolean,    // When code splitting is used (`inline === false`) the input worker file names are
-                                    // preserved, if duplicates are found `-n` is appended to the file names.
-                                    // Default: false
-
-    enableUnicodeSupport?: boolean, // When inlined in Base64 format, this option enables unicode support (UTF16). This
-                                    // flag is disabled by default because supporting UTF16 doubles the size of the final
-                                    // payload. Default: false
-
-    outputFolder?: string,          // When code splitting is used (`inline: false`), folder in which the worker scripts
-                                    // should be written to. Default: '' (same as build output folder)
-
-    loadPath?: string,              // This option is useful when the worker scripts need to be loaded from another folder.
-                                    // Default: ''
-
-    skipPlugins?: Array             // Plugin names to skip for web worker build
-                                    // Default: [ 'liveServer', 'serve', 'livereload' ]
-})
-```
-
-### TypeScript
-An example project that uses this plugin with TypeScript can be found [here](https://github.com/darionco/rollup-typescript-webworkers)
-
-**WARNING:** `@rollup/plugin-typescript` is NOT compatible with this plugin, use `rollup-plugin-typescript2` instead (see [#38](https://github.com/darionco/rollup-plugin-web-worker-loader/issues/38)).
-
-### Notes
-**WARNING:** To use code-splitting for the worker scripts, Rollup v1.9.2 or higher is required. See https://github.com/rollup/rollup/issues/2801 for more details.
-
-The `sourcemap` configuration option is ignored when `inline` is set to `false`, in that case the project's sourcemap configuration is inherited.
-
-`loadPath` is meant to be used in situations where code-splitting is used (`inline = false`) and the entry script is hosted in a different folder than the worker code.
-
-Setting `targetPlatform` to `'base64'` will ignore the `inline` option and will always inline the resulting code.
-
-
-### Roadmap
-- [x] Bundle file as web worker blob
-- [x] Support for dependencies using `import`
-- [x] Include source map
-- [x] Configuration options to inline or code-split workers
-- [ ] ~~Provide capability checks and fallbacks~~ DROPPED (all modern environments support workers) 
-- [ ] ~~Avoid code duplication~~ DROPPED (there are better solutions for this purpose)
-
-
+MIT

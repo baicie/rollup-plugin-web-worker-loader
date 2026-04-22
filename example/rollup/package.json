@@ -1,0 +1,17 @@
+{
+    "name": "example-rollup",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c -w"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "@rollup/plugin-typescript": "^12.0.0",
+        "rollup": "^4.22.5",
+        "rollup-plugin-web-worker-loader": "workspace:*",
+        "typescript": "^5.6.0"
+    }
+}
