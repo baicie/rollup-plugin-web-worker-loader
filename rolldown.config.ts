@@ -1,6 +1,7 @@
+import { copyFileSync } from 'node:fs'
 import { builtinModules } from 'node:module'
+import { resolve } from 'node:path'
 import { defineConfig } from 'rolldown'
-import { dts } from 'rolldown-plugin-dts'
 import pkg from './package.json'
 
 const externals = [
@@ -10,6 +11,18 @@ const externals = [
   ...builtinModules.map(module => `node:${module}`),
   'require',
 ]
+
+function copyDtsPlugin() {
+  return {
+    name: 'copy-dts',
+    writeBundle() {
+      copyFileSync(
+        resolve(__dirname, 'src/index.d.ts'),
+        resolve(__dirname, 'dist/index.d.ts'),
+      )
+    },
+  }
+}
 
 const config = defineConfig([
   {
@@ -24,6 +37,7 @@ const config = defineConfig([
     },
     external: externals,
     treeshake: true,
+    plugins: [copyDtsPlugin()],
   },
   {
     input: './src/index.js',
@@ -39,18 +53,30 @@ const config = defineConfig([
     treeshake: true,
   },
   {
-    input: './src/index.js',
+    input: './src/rolldown.js',
     output: {
       dir: './dist',
       format: 'esm',
+      entryFileNames: 'rolldown.mjs',
+      chunkFileNames: '[name]-[hash].mjs',
+      exports: 'named',
+      sourcemap: true,
     },
     external: externals,
     treeshake: true,
-    plugins: [
-      dts({
-        emitDtsOnly: true,
-      }),
-    ],
+  },
+  {
+    input: './src/rolldown.js',
+    output: {
+      dir: './dist',
+      format: 'cjs',
+      entryFileNames: 'rolldown.cjs',
+      chunkFileNames: '[name]-[hash].cjs',
+      exports: 'named',
+      sourcemap: true,
+    },
+    external: externals,
+    treeshake: true,
   },
 ])
 

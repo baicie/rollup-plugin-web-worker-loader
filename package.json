@@ -33,6 +33,17 @@
         "default": "./dist/index.cjs"
       },
       "default": "./dist/index.mjs"
+    },
+    "./rolldown": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/rolldown.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/rolldown.cjs"
+      },
+      "default": "./dist/rolldown.mjs"
     }
   },
   "main": "./dist/index.cjs",

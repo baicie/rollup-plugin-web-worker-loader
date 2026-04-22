@@ -4,6 +4,7 @@ import { load } from './plugin/load.js'
 import { transform } from './plugin/transform.js'
 import { outputOptions } from './plugin/outputOptions.js'
 import { generateBundle } from './plugin/generateBundle.js'
+import { rolldownLoad } from './plugin/rolldownLoad.js'
 
 const defaultConfig = {
   targetPlatform: 'auto',
@@ -26,11 +27,8 @@ const defaultConfig = {
   skipPlugins: ['liveServer', 'serve', 'livereload'],
 }
 
-export function workerLoaderPlugin(userConfig = null) {
-  const config = Object.assign({}, defaultConfig, userConfig)
-  config.skipPlugins = new Set(config.skipPlugins)
-
-  const state = {
+function createState() {
+  return {
     idMap: new Map(),
     exclude: new Set(),
     outFiles: new Map(),
@@ -39,24 +37,36 @@ export function workerLoaderPlugin(userConfig = null) {
     forceInlineCounter: 0,
     configuredFileNames: new Map(),
   }
+}
 
-  return {
+function applySharedHooks(pluginObj, state, config) {
+  pluginObj.options = optionsArg => optionsImp(state, config, optionsArg)
+  pluginObj.resolveId = (importee, importer) =>
+    resolveId(state, config, importee, importer)
+  pluginObj.transform = (code, id) => transform(state, config, code, id)
+}
+
+export function workerLoaderPlugin(userConfig = null) {
+  const config = Object.assign({}, defaultConfig, userConfig)
+  config.skipPlugins = new Set(config.skipPlugins)
+
+  const state = createState()
+
+  const pluginObj = {
     name: 'rollup-plugin-web-worker-loader',
 
-    options(optionsArg) {
-      return optionsImp(state, config, optionsArg)
-    },
-
-    resolveId(importee, importer) {
-      return resolveId(state, config, importee, importer)
-    },
-
     load(id) {
-      return load(state, config, this.addWatchFile, id)
-    },
-
-    transform(code, id) {
-      return transform(state, config, code, id)
+      const rawAddWatchFile = this.addWatchFile
+      const ctx = this
+      const addWatchFile = dep => {
+        if (!ctx.inner) return
+        try {
+          rawAddWatchFile.call(ctx, dep)
+        } catch {
+          // ignore
+        }
+      }
+      return load(state, config, addWatchFile, id)
     },
 
     outputOptions(options) {
@@ -67,6 +77,36 @@ export function workerLoaderPlugin(userConfig = null) {
       generateBundle(state, config, options, bundle, isWrite)
     },
   }
+
+  applySharedHooks(pluginObj, state, config)
+  return pluginObj
 }
+
+export function workerLoaderRolldownPlugin(userConfig = null) {
+  const config = Object.assign({}, defaultConfig, userConfig)
+  config.skipPlugins = new Set(config.skipPlugins)
+
+  const state = createState()
+
+  const pluginObj = {
+    name: 'rollup-plugin-web-worker-loader',
+
+    async load(id) {
+      return await rolldownLoad(state, config, this, id)
+    },
+
+    outputOptions(options) {
+      return outputOptions(state, config, options)
+    },
+
+    generateBundle(options, bundle, isWrite) {
+      generateBundle(state, config, options, bundle, isWrite)
+    },
+  }
+
+  applySharedHooks(pluginObj, state, config)
+  return pluginObj
+}
+
 export { workerLoaderPlugin as webWorkerLoader }
 export { workerLoaderPlugin as default }

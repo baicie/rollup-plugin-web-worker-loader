@@ -1,4 +1,5 @@
 import type { Plugin } from 'rollup'
+import type { Plugin as RolldownPlugin } from 'rolldown'
 
 export type TargetPlatform = 'auto' | 'browser' | 'node'
 export type WorkerType =
@@ -107,5 +108,10 @@ export interface WorkerLoaderConfig {
 
 export type WorkerLoaderPlugin = (config?: WorkerLoaderConfig) => Plugin
 
+export type RolldownWorkerLoaderPlugin = (
+  config?: WorkerLoaderConfig,
+) => RolldownPlugin
+
 declare const workerLoaderPlugin: WorkerLoaderPlugin
+declare const workerLoaderRolldownPlugin: RolldownWorkerLoaderPlugin
 export default workerLoaderPlugin

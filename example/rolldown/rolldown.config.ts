@@ -1,10 +1,10 @@
 import { defineConfig } from 'rolldown';
-import { webWorkerLoader } from '@baicie/web-worker-inline';
+import webWorkerLoader from '@baicie/web-worker-inline/rolldown';
 
 export default defineConfig({
     input: './src/main.ts',
     output: {
-        file: './dist/bundle.js',
+        dir: './dist',
         format: 'esm',
         sourcemap: true,
     },
