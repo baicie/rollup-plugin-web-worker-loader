@@ -13,7 +13,7 @@ export function extractSource(code: string, asFunction = true): string {
 
 export function fixMapSources(
   chunk: {
-    map: RawSourceMap & { sources: string[], sourcesContent: string[] }
+    map: RawSourceMap & { sources: string[]; sourcesContent: string[] }
     modules: Record<string, { originalLength: number }>
   },
   basePath: string,
@@ -37,16 +37,14 @@ export function fixMapSources(
       for (const component of components) {
         if (component === '..') {
           ++upFolder
-        }
-        else {
+        } else {
           newComponents.push(component)
         }
       }
       newComponents.push(path.basename(full))
       maxUpFolder = Math.max(maxUpFolder, upFolder)
       newSourcesComponents[i] = newComponents
-    }
-    else {
+    } else {
       newSourcesComponents[i] = null
     }
   }
@@ -60,8 +58,8 @@ export function fixMapSources(
 
   for (let i = 0; i < map.sources.length; ++i) {
     if (newSourcesComponents[i]) {
-      map.sources[i]
-        = `worker:/${path.resolve(newBase, ...newSourcesComponents[i]!)}`
+      map.sources[i] =
+        `worker:/${path.resolve(newBase, ...newSourcesComponents[i]!)}`
     }
   }
 

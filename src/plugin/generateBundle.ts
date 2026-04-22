@@ -12,8 +12,8 @@ export function handleGenerateBundle(
 ): void {
   if (!config.inline && isWrite) {
     if (
-      state.configuredFileNames.size > 0
-      && Object.keys(bundle).length === 1
+      state.configuredFileNames.size > 0 &&
+      Object.keys(bundle).length === 1
     ) {
       const key = Object.keys(bundle)[0]
       const configuredName = state.configuredFileNames.get(

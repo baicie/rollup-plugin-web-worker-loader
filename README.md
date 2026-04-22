@@ -165,7 +165,7 @@ shared.port.postMessage('Hello!')
 ```typescript
 import ServiceWorker from 'service-worker:./ServiceWorker'
 
-ServiceWorker.then((registration) => {
+ServiceWorker.then(registration => {
   console.log('Registered:', registration.scope)
 })
 ```

@@ -5,8 +5,8 @@ import { fileURLToPath } from 'node:url'
 import { buildWorkerCode } from '../utils/buildWorkerCode.js'
 import { extractSource, fixMapSources } from '../utils/extractSource.js'
 
-const HELPER_PATTERN
-  = /^\0(?:\d+::)?rollup-plugin-web-worker-loader::helper(?:::)?/
+const HELPER_PATTERN =
+  /^\0(?:\d+::)?rollup-plugin-web-worker-loader::helper(?:::)?/
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -17,8 +17,7 @@ function loadHelperFile(id: string, match: RegExpExecArray): Promise<string> {
     fs.readFile(helperPath, 'utf8', (err, data) => {
       if (err) {
         reject(err)
-      }
-      else {
+      } else {
         resolve(data)
       }
     })
@@ -71,8 +70,7 @@ function handleBundleGenerated(
   result: { output: BundleOutput[] },
 ): { code: string } | null {
   const chunk = findChunk(result.output)
-  if (chunk === null)
-    return null
+  if (chunk === null) return null
 
   if (chunk.modules) {
     updateWatchModules(chunk.modules as Record<string, unknown>, addWatchFile)
@@ -95,8 +93,7 @@ function handleBundleGenerated(
         state.basePath ?? '.',
       )
     }
-  }
-  else {
+  } else {
     const workerPath = path.posix.join(config.outputFolder, workerID)
     source = path.posix.join(config.loadPath, workerPath)
     chunk.fileName = workerPath
@@ -137,8 +134,8 @@ async function bundleWorker(
     ;(inputOptions as Record<string, unknown>).external = config.external
   }
 
-  let bundler: { rollup: (options: object) => Promise<RollupBundle> } | null
-    = null
+  let bundler: { rollup: (options: object) => Promise<RollupBundle> } | null =
+    null
   let bundlerName = ''
 
   try {
@@ -146,8 +143,7 @@ async function bundleWorker(
       rollup: (options: object) => Promise<RollupBundle>
     }
     bundlerName = 'rolldown'
-  }
-  catch {
+  } catch {
     // rolldown not available, try @rolldown/rolldown
   }
 
@@ -157,8 +153,7 @@ async function bundleWorker(
         rollup: (options: object) => Promise<RollupBundle>
       }
       bundlerName = '@rolldown/rolldown'
-    }
-    catch {
+    } catch {
       // @rolldown/rolldown not available, try rollup
     }
   }
@@ -169,8 +164,7 @@ async function bundleWorker(
         rollup: (options: object) => Promise<RollupBundle>
       }
       bundlerName = 'rollup'
-    }
-    catch {
+    } catch {
       // rollup not available
     }
   }
@@ -216,8 +210,7 @@ async function bundleWorker(
       }
     }
     return null
-  }
-  catch (reason) {
+  } catch (reason) {
     state.exclude.clear()
     throw reason
   }

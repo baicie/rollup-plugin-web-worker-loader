@@ -14,29 +14,27 @@ export function handleOptions(
       const plugins: unknown[] = []
       for (const plugin of options.plugins) {
         if (
-          typeof plugin === 'object'
-          && plugin
-          && 'name' in plugin
-          && config.skipPlugins.has((plugin as { name: string }).name)
+          typeof plugin === 'object' &&
+          plugin &&
+          'name' in plugin &&
+          config.skipPlugins.has((plugin as { name: string }).name)
         ) {
           continue
         }
         plugins.push(plugin)
       }
-      ;(state.options as RollupInputOptions & { plugins: unknown[] }).plugins
-        = plugins
+      ;(state.options as RollupInputOptions & { plugins: unknown[] }).plugins =
+        plugins
 
       const cwd = process.cwd()
       if (typeof options.input === 'string') {
         try {
           const entry = require.resolve(options.input, { paths: [cwd] })
           state.basePath = path.dirname(entry)
-        }
-        catch {
+        } catch {
           /* EMPTY */
         }
-      }
-      else if (Array.isArray(options.input)) {
+      } else if (Array.isArray(options.input)) {
         let componentCount = Number.MAX_SAFE_INTEGER
         let shortestPath: string | null = null
         for (const input of options.input) {
@@ -48,14 +46,12 @@ export function handleOptions(
               componentCount = components.length
               shortestPath = entryPath
             }
-          }
-          catch {
+          } catch {
             /* EMPTY */
           }
         }
         state.basePath = shortestPath
-      }
-      else if (typeof options.input === 'object') {
+      } else if (typeof options.input === 'object') {
         const keys = Object.keys(options.input)
         let componentCount = Number.MAX_SAFE_INTEGER
         let shortestPath: string | null = null
@@ -69,8 +65,7 @@ export function handleOptions(
               componentCount = components.length
               shortestPath = entryPath
             }
-          }
-          catch {
+          } catch {
             /* EMPTY */
           }
         }

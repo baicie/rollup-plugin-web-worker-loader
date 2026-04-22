@@ -50,8 +50,7 @@ function resolveModule(
   for (const testName of testNames) {
     try {
       return require.resolve(testName, { paths })
-    }
-    catch {
+    } catch {
       // empty
     }
   }
@@ -81,8 +80,7 @@ export function handleResolveId(
         const resolvePaths = require.resolve.paths(importer)
         resolvePaths.push(folder)
         target = resolveModule(name, resolvePaths, config.extensions)
-      }
-      else if (path.isAbsolute(name)) {
+      } else if (path.isAbsolute(name)) {
         target = name
       }
 
@@ -97,14 +95,12 @@ export function handleResolveId(
             workerName = path.basename(target, extension)
             if (!state.outFiles.has(workerName)) {
               state.outFiles.set(workerName, 0)
-            }
-            else {
+            } else {
               const duplicateCount = state.outFiles.get(workerName)!
               state.outFiles.set(workerName, duplicateCount + 1)
               workerName += duplicateCount + 1
             }
-          }
-          else {
+          } else {
             workerName = `${type}-${state.idMap.size}`
           }
 

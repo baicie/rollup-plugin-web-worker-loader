@@ -8,8 +8,7 @@ export function createInlineWorkerFactory(
   const lines = funcToSource(fn, sourcemapArg)
   const concat = lines.join('\n')
   return function WorkerFactory(options?: object): Worker | null {
-    if (!WorkerClass)
-      return null
+    if (!WorkerClass) return null
     return new WorkerClass(concat, {
       ...options,
       eval: true,

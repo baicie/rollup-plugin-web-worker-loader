@@ -6,7 +6,7 @@ export function handleTransform(
   config: InternalConfig,
   code: string,
   id: string,
-): { code: string, map: string } | null {
+): { code: string; map: string } | null {
   if (state.idMap.has(id) && !state.exclude.has(id)) {
     const { inputOptions } = state.idMap.get(id)!
     return {

@@ -4,4 +4,5 @@ release({
   repo: 'baicie',
   packages: ['worker'],
   toTag: (pkg, version) => `${pkg}@${version}`,
+  getPkgDir: () => '.',
 })

@@ -1,5 +1,5 @@
 import { defineConfig } from 'rolldown';
-import { webWorkerLoader } from 'rollup-plugin-web-worker-loader';
+import { webWorkerLoader } from '../../src';
 
 export default defineConfig({
     input: './src/main.ts',

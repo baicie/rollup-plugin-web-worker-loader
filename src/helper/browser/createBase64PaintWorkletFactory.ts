@@ -17,13 +17,13 @@ function createURL(
   enableUnicodeArg?: boolean,
 ): string {
   const sourcemap = sourcemapArg === undefined ? null : sourcemapArg
-  const enableUnicode
-    = enableUnicodeArg === undefined ? false : enableUnicodeArg
+  const enableUnicode =
+    enableUnicodeArg === undefined ? false : enableUnicodeArg
   const source = decodeBase64(base64, enableUnicode)
   const start = source.indexOf('\n', 10) + 1
-  const body
-    = source.substring(start)
-      + (sourcemap ? `//# sourceMappingURL=${sourcemap}` : '')
+  const body =
+    source.substring(start) +
+    (sourcemap ? `//# sourceMappingURL=${sourcemap}` : '')
   const blob = new Blob([body], { type: 'application/javascript' })
   return URL.createObjectURL(blob)
 }

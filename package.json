@@ -5,7 +5,10 @@
   "description": "Web Worker integration for Baicie projects",
   "author": "baicie",
   "license": "MIT",
-  "repository": "https://github.com/baicie/rollup-plugin-web-worker-loader",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/baicie/rollup-plugin-web-worker-loader.git"
+  },
   "keywords": [
     "rolldown",
     "rolldown-plugin",
@@ -35,6 +38,9 @@
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "rolldown -c rolldown.config.ts -w",
     "build": "rolldown -c rolldown.config.ts",
@@ -63,6 +69,7 @@
     "@antfu/eslint-config": "^8.2.0",
     "@baicie/release": "^0.1.14",
     "@baicie/scripts": "^0.1.2",
+    "@baicie/web-worker-inline": "link:./",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@rollup/plugin-typescript": "^12.3.0",
     "@types/node": "^25.6.0",

@@ -1,10 +1,11 @@
 export type TargetPlatform = 'auto' | 'browser' | 'node' | 'base64'
-export type WorkerType
-  = | 'web-worker'
-    | 'audio-worklet'
-    | 'paint-worklet'
-    | 'service-worker'
-    | 'shared-worker'
+// eslint-disable-next-line style/operator-linebreak
+export type WorkerType =
+  | 'web-worker'
+  | 'audio-worklet'
+  | 'paint-worklet'
+  | 'service-worker'
+  | 'shared-worker'
 
 export interface WebWorkerLoaderConfig {
   targetPlatform?: TargetPlatform
