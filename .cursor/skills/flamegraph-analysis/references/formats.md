@@ -148,9 +148,16 @@ Used by `chrome://tracing`. Supported events: `B` (begin), `E` (end), `X` (compl
 |------|----|------|
 | perf | collapsed stack | `stackcollapse-perf.pl` |
 | perf | speedscope | `speedscope --input=perf.data` |
-| cpuprofile | speedscope | speedscope.app (drag & drop) |
+| cpuprofile | speedscope | `python scripts/convert_format.py` |
 | collapsed | flamegraph SVG | `flamegraph.pl` |
 | any | speedscope | [speedscope.app](https://speedscope.app) (drag & drop) |
+
+**Python converter (no deps):**
+
+```bash
+python scripts/convert_format.py input.cpuprofile -o out.speedscope.json
+python scripts/convert_format.py input.speedscope.json --to collapsed -o out.txt
+```
 
 ## Node.js Profiling
 

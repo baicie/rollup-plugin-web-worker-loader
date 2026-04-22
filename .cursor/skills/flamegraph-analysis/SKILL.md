@@ -66,3 +66,33 @@ View any of these at [https://speedscope.app](https://speedscope.app) for intera
 5. Trace back up the call stack to find the root cause
 6. Compare before/after profiles to validate fixes
 ```
+
+## Python Scripts
+
+Located in `scripts/`. All scripts auto-detect format (speedscope JSON, cpuprofile, collapsed stack).
+
+| Script | Purpose | Key Flags |
+|--------|---------|-----------|
+| `analyze_profile.py` | Summarize profile: top stacks, top frames by self/total time | `--top N`, `--format` |
+| `top_hot_paths.py` | Walk call tree: show callees or callers for hot frames | `--depth N`, `--show callers\|callees`, `--stacks` |
+| `diff_profiles.py` | Compare baseline vs current: regressions and improvements | `--top N` |
+| `convert_format.py` | Convert between formats or merge multiple profiles | `--to collapsed\|speedscope`, `--merge` |
+
+**Examples:**
+
+```bash
+# Summarize a profile
+python scripts/analyze_profile.py profile.speedscope.json
+
+# Find callers of the hottest function
+python scripts/top_hot_paths.py profile.cpuprofile --show callers --depth 5
+
+# Compare before vs after optimization
+python scripts/diff_profiles.py before.json after.json --top 50
+
+# Convert cpuprofile to speedscope
+python scripts/convert_format.py profile.cpuprofile -o out.speedscope.json
+
+# Merge multiple profiles
+python scripts/convert_format.py a.json b.json c.json --merge -o merged.json
+```
