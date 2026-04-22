@@ -1,19 +1,19 @@
 # rollup-plugin-web-worker-loader
 
-Rollup/Rolldown plugin to handle Web Workers, Service Workers, Shared Workers, Audio Worklets, and Paint Worklets. Written in TypeScript.
+Web Worker, Service Worker, Shared Worker, Audio Worklet, and Paint Worklet integration plugin for Rollup and Rolldown. Written in TypeScript.
 
-Web Workers are available in Node.js as well as in browsers. All the other worklets and workers are available in browsers only, and will throw a runtime error if used in Node.js.
+Web Workers are available in both Node.js and browsers. All other worklet types are browser-only.
 
 Supports both **Rollup** (v1-v4) and **Rolldown** (v1+) as bundlers. The plugin automatically detects and uses whichever bundler is available in your project.
 
 ## Installation
 
 ```bash
-npm install rollup-plugin-web-worker-loader --save-dev
+npm install @baicie/web-worker-inline --save-dev
 # or
-yarn add rollup-plugin-web-worker-loader --dev
+yarn add @baicie/web-worker-inline --dev
 # or
-pnpm add rollup-plugin-web-worker-loader --save-dev
+pnpm add @baicie/web-worker-inline --save-dev
 ```
 
 ## Usage
@@ -21,18 +21,25 @@ pnpm add rollup-plugin-web-worker-loader --save-dev
 ### With Rollup
 
 ```typescript
-import typescript from '@rollup/plugin-typescript'
 // rollup.config.ts
 import { defineConfig } from 'rollup'
-import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import typescript from '@rollup/plugin-typescript'
+import webWorkerLoader from '@baicie/web-worker-inline'
 
 export default defineConfig({
-  input: 'src/main.ts',
+  input: './src/main.ts',
   output: {
-    file: 'dist/bundle.js',
+    file: './dist/bundle.js',
     format: 'esm',
+    sourcemap: true,
   },
-  plugins: [webWorkerLoader(), typescript()],
+  plugins: [
+    webWorkerLoader({
+      targetPlatform: 'browser',
+      inline: true,
+    }),
+    typescript(),
+  ],
 })
 ```
 
@@ -41,38 +48,48 @@ export default defineConfig({
 ```typescript
 // rolldown.config.ts
 import { defineConfig } from 'rolldown'
-import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import webWorkerLoader from '@baicie/web-worker-inline/rolldown'
 
 export default defineConfig({
-  input: 'src/main.ts',
+  input: './src/main.ts',
   output: {
-    file: 'dist/bundle.js',
+    dir: './dist',
     format: 'esm',
+    sourcemap: true,
   },
-  plugins: [webWorkerLoader()],
+  plugins: [
+    webWorkerLoader({
+      targetPlatform: 'browser',
+      inline: true,
+    }),
+  ],
 })
 ```
 
 ## Import Pattern
 
-Import web workers using the `web-worker:` prefix (or custom pattern):
+Import workers using the `web-worker:` prefix (or a custom pattern):
 
 ```typescript
-import DataWorker from 'web-worker:./DataWorker'
+import MyWorker from 'web-worker:./worker'
 
-const worker = new DataWorker()
+const worker = new MyWorker()
 worker.postMessage('Hello World!')
 ```
 
 ## Configuration Options
 
 ```typescript
-import webWorkerLoader from 'rollup-plugin-web-worker-loader'
+import webWorkerLoader from '@baicie/web-worker-inline'
 
 webWorkerLoader({
-  // Target platform: 'auto', 'browser', 'node', or 'base64'
+  // Target platform: 'auto', 'browser', 'node'
   // Default: 'auto'
   targetPlatform: 'auto',
+
+  // Browser worker class: 'Worker' or 'SharedWorker'
+  // Default: 'Worker'
+  browserWorker: 'Worker',
 
   // Pattern to match web worker imports
   // Default: /web-worker:(.+)/
@@ -95,11 +112,11 @@ webWorkerLoader({
   sharedWorkerPattern: /shared-worker:(.+)/,
 
   // File extensions to try when resolving worker files
-  // Default: ['.js']
+  // Default: ['.js', '.ts']
   extensions: ['.js', '.ts'],
 
-  // Inline worker code as base64 (or preserve source)
-  // Default: true (inline)
+  // Inline worker code as base64 URL (or preserve source)
+  // Default: true
   inline: true,
 
   // Force code to be inlined every time it's imported
@@ -173,8 +190,6 @@ ServiceWorker.then((registration) => {
 ### Audio Worklet
 
 ```typescript
-// Worklet processor
-// Consumer
 import registerAudio from 'audio-worklet:./AudioProcessor'
 
 class MyAudioProcessor extends AudioWorkletProcessor {}
@@ -187,8 +202,6 @@ registerAudio(audioContext)
 ### Paint Worklet
 
 ```typescript
-// Worklet
-// Consumer
 import registerPaint from 'paint-worklet:./Painter'
 
 class MyPainter {}
