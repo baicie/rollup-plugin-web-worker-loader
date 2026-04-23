@@ -91,6 +91,10 @@ export function workerLoaderRolldownPlugin(userConfig = null) {
   const pluginObj = {
     name: 'rollup-plugin-web-worker-loader',
 
+    resolveId(source, importer) {
+      return resolveId(state, config, source, importer)
+    },
+
     async load(id) {
       return await rolldownLoad(state, config, this, id)
     },

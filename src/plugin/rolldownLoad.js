@@ -117,7 +117,7 @@ export async function rolldownLoad(state, config, ctx, id) {
     const output = await nestedBundler.generate({
       format: 'iife',
       name: 'worker_code',
-      inlineDynamicImports: true,
+      codeSplitting: false,
       sourcemap: config.sourcemap || false,
     })
 
