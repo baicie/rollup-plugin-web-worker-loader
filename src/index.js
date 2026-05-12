@@ -29,7 +29,6 @@ const defaultConfig = {
 
 function createState() {
   return {
-    _uid: Math.random(),
     idMap: new Map(),
     exclude: new Set(),
     outFiles: new Map(),
@@ -37,11 +36,25 @@ function createState() {
     basePath: null,
     forceInlineCounter: 0,
     configuredFileNames: new Map(),
+    _buildCount: 0,
   }
 }
 
 function applySharedHooks(pluginObj, state, config) {
-  pluginObj.options = optionsArg => optionsImp(state, config, optionsArg)
+  pluginObj.options = optionsArg => {
+    const result = optionsImp(state, config, optionsArg)
+
+    if (state._buildCount > 0 && state.idMap.size > 0) {
+      state.idMap.clear()
+      state.exclude.clear()
+      state.outFiles.clear()
+      state.configuredFileNames.clear()
+      state.forceInlineCounter = 0
+    }
+    state._buildCount++
+
+    return result
+  }
   pluginObj.resolveId = (importee, importer) =>
     resolveId(state, config, importee, importer)
   pluginObj.transform = (code, id) => transform(state, config, code, id)

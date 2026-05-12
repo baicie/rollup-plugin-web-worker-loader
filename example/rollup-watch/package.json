@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "rollup -c rollup.config.ts --configPlugin esbuild",
-    "dev": "rollup -c rollup.config.ts --configPlugin esbuild -w"
+    "dev": "rollup -c rollup.config.ts -w"
   },
   "devDependencies": {
     "@baicie/web-worker-inline": "workspace:*",
