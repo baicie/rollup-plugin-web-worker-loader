@@ -1,5 +1,5 @@
-export function generateBundle(state, config, options, bundle, isWrite) {
-  if (!config.inline && isWrite) {
+export function generateBundle(state, config, options, bundle) {
+  if (!config.inline) {
     if (
       state.configuredFileNames.size > 0 &&
       Object.keys(bundle).length === 1

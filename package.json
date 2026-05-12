@@ -1,7 +1,7 @@
 {
   "name": "@baicie/web-worker-inline",
   "type": "module",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Web Worker integration for Baicie projects",
   "author": "baicie",
   "license": "MIT",

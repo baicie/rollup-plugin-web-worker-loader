@@ -73,8 +73,8 @@ export function workerLoaderPlugin(userConfig = null) {
       return outputOptions(state, config, options)
     },
 
-    generateBundle(options, bundle, isWrite) {
-      generateBundle(state, config, options, bundle, isWrite)
+    generateBundle(options, bundle) {
+      generateBundle(state, config, options, bundle)
     },
   }
 
@@ -103,8 +103,8 @@ export function workerLoaderRolldownPlugin(userConfig = null) {
       return outputOptions(state, config, options)
     },
 
-    generateBundle(options, bundle, isWrite) {
-      generateBundle(state, config, options, bundle, isWrite)
+    generateBundle(options, bundle) {
+      generateBundle(state, config, options, bundle)
     },
   }
 

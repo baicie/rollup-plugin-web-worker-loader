@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "build": "rollup -c",
-        "dev": "serve"
+        "dev": "rollup -c --watch",
+        "dev2": "serve"
     },
     "dependencies": {},
     "devDependencies": {

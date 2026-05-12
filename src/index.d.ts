@@ -115,3 +115,9 @@ export type RolldownWorkerLoaderPlugin = (
 declare const workerLoaderPlugin: WorkerLoaderPlugin
 declare const workerLoaderRolldownPlugin: RolldownWorkerLoaderPlugin
 export default workerLoaderPlugin
+
+declare module 'web-worker:*'
+declare module 'audio-worklet:*'
+declare module 'paint-worklet:*'
+declare module 'service-worker:*'
+declare module 'shared-worker:*'
