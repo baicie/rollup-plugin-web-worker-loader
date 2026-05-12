@@ -1,10 +1,12 @@
 import { optionsImp } from './plugin/options.js'
-import { resolveId } from './plugin/resolveId.js'
+import { resolveId, buildInputOptions } from './plugin/resolveId.js'
 import { load } from './plugin/load.js'
 import { transform } from './plugin/transform.js'
 import { outputOptions } from './plugin/outputOptions.js'
 import { generateBundle } from './plugin/generateBundle.js'
 import { rolldownLoad } from './plugin/rolldownLoad.js'
+
+export { buildInputOptions }
 
 const defaultConfig = {
   targetPlatform: 'auto',
@@ -24,7 +26,13 @@ const defaultConfig = {
   external: undefined,
   extensions: ['.js', '.ts'],
   outputFolder: '',
-  skipPlugins: ['liveServer', 'serve', 'livereload'],
+  skipPlugins: [
+    'liveServer',
+    'serve',
+    'livereload',
+    'commonjs',
+    'commonjs--resolver',
+  ],
 }
 
 function createState() {
@@ -42,18 +50,17 @@ function createState() {
 
 function applySharedHooks(pluginObj, state, config) {
   pluginObj.options = optionsArg => {
-    const result = optionsImp(state, config, optionsArg)
-
-    if (state._buildCount > 0 && state.idMap.size > 0) {
-      state.idMap.clear()
+    if (state._buildCount > 0) {
       state.exclude.clear()
       state.outFiles.clear()
       state.configuredFileNames.clear()
       state.forceInlineCounter = 0
+      state._initialized = false
     }
     state._buildCount++
 
-    return result
+    optionsImp(state, config, optionsArg)
+    return null
   }
   pluginObj.resolveId = (importee, importer) =>
     resolveId(state, config, importee, importer)

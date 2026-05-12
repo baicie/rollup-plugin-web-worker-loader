@@ -4,6 +4,7 @@ import * as rollup from 'rollup'
 import { fixMapSources } from '../utils/fixMapSources.js'
 import { extractSource } from '../utils/extractSource.js'
 import { buildWorkerCode } from '../utils/buildWorkerCode.js'
+import { buildInputOptions } from './resolveId.js'
 
 const require = createRequire(import.meta.url)
 
@@ -492,10 +493,12 @@ export async function load(state, config, addWatchFile, id) {
   }
 
   const meta = state.idMap.get(id)
-  const { inputOptions, workerID, target } = meta
+  const { workerID, target } = meta
 
   state.exclude.add(id)
   state.exclude.add(target)
+
+  const inputOptions = buildInputOptions(state, target)
 
   try {
     if (config.external) {

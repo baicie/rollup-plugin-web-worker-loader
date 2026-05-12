@@ -109,7 +109,6 @@ export function resolveId(state, config, importee, importer) {
           state.idMap.set(prefixed, {
             workerID: `${workerName}.js`,
             chunk: null,
-            inputOptions,
             target,
             type,
           })
@@ -123,4 +122,11 @@ export function resolveId(state, config, importee, importer) {
     }
   }
   return null
+}
+
+export function buildInputOptions(state, target) {
+  return Object.assign({}, state.options, {
+    input: target,
+    plugins: state.options.plugins.slice(),
+  })
 }
