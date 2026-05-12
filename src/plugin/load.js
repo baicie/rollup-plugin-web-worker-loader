@@ -479,52 +479,50 @@ export function handleBundleGenerated(
   return null
 }
 
-export function load(state, config, addWatchFile, id) {
-  return new Promise((resolve, reject) => {
-    const helperMatch = helperPattern.exec(id)
-    if (helperMatch) {
+export async function load(state, config, addWatchFile, id) {
+  const helperMatch = helperPattern.exec(id)
+  if (helperMatch) {
+    return new Promise((resolve, reject) => {
       loadHelperFile(id, helperMatch, resolve, reject)
-    } else if (state.idMap.has(id) && !state.exclude.has(id)) {
-      const { inputOptions, workerID, target } = state.idMap.get(id)
-      state.exclude.add(id)
-      state.exclude.add(target)
-      if (config.external) {
-        inputOptions.external = config.external
-      }
-      rollup
-        .rollup(inputOptions)
-        .then(bundle => {
-          state.exclude.delete(id)
-          state.exclude.delete(target)
-          const bundleOptions = {
-            format: 'iife',
-            name: 'worker_code',
-            sourcemap: true,
-            inlineDynamicImports: true,
-          }
-          bundle
-            .generate(bundleOptions)
-            .then(result => {
-              resolve(
-                handleBundleGenerated(
-                  state,
-                  config,
-                  addWatchFile,
-                  id,
-                  workerID,
-                  result,
-                ),
-              )
-            })
-            .catch(reject)
-        })
-        .catch(reason => {
-          state.exclude.delete(id)
-          state.exclude.delete(target)
-          reject(reason)
-        })
-    } else {
-      resolve(null)
+    })
+  }
+
+  if (!state.idMap.has(id) || state.exclude.has(id)) {
+    return null
+  }
+
+  const meta = state.idMap.get(id)
+  const { inputOptions, workerID, target } = meta
+
+  state.exclude.add(id)
+  state.exclude.add(target)
+
+  try {
+    if (config.external) {
+      inputOptions.external = config.external
     }
-  })
+
+    const bundle = await rollup.rollup(inputOptions)
+
+    const result = await bundle.generate({
+      format: 'iife',
+      name: 'worker_code',
+      sourcemap: true,
+      inlineDynamicImports: true,
+    })
+
+    await bundle.close?.()
+
+    return handleBundleGenerated(
+      state,
+      config,
+      addWatchFile,
+      id,
+      workerID,
+      result,
+    )
+  } finally {
+    state.exclude.delete(id)
+    state.exclude.delete(target)
+  }
 }

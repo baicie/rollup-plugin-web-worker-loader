@@ -29,6 +29,7 @@ const defaultConfig = {
 
 function createState() {
   return {
+    _uid: Math.random(),
     idMap: new Map(),
     exclude: new Set(),
     outFiles: new Map(),
@@ -59,7 +60,7 @@ export function workerLoaderPlugin(userConfig = null) {
       const rawAddWatchFile = this.addWatchFile
       const ctx = this
       const addWatchFile = dep => {
-        if (!ctx.inner) return
+        if (!dep || !rawAddWatchFile) return
         try {
           rawAddWatchFile.call(ctx, dep)
         } catch {

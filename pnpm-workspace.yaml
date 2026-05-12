@@ -4,3 +4,7 @@ trustPolicy: no-downgrade
 
 packages:
   - example/*
+
+allowBuilds:
+  esbuild: true
+  simple-git-hooks: true

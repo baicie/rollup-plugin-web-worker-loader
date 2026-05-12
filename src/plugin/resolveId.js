@@ -84,10 +84,11 @@ export function resolveId(state, config, importee, importer) {
       }
 
       if (target) {
-        const prefixed = `\0rollup-plugin-worker-loader::module:${config.forceInline ? `:${state.forceInlineCounter++}:` : ''}${target}`
+        const prefixed = `\0rollup-plugin-web-worker-loader::module:${config.forceInline ? `:${state.forceInlineCounter++}:` : ''}${target}`
         if (!state.idMap.has(prefixed)) {
           const inputOptions = Object.assign({}, state.options, {
             input: target,
+            plugins: state.options.plugins.slice(),
           })
 
           let workerName

@@ -1,0 +1,20 @@
+{
+  "name": "example-rollup-watch",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c rollup.config.ts --configPlugin esbuild",
+    "dev": "rollup -c rollup.config.ts --configPlugin esbuild -w"
+  },
+  "devDependencies": {
+    "@baicie/web-worker-inline": "workspace:*",
+    "@rollup/plugin-commonjs": "^29.0.0",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.3",
+    "rollup": "^4.60.2",
+    "rollup-plugin-esbuild": "^6.2.1",
+    "rollup-plugin-replace": "^2.2.0",
+    "typescript": "^6.0.3"
+  }
+}

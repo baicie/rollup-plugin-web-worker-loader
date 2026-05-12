@@ -16,6 +16,7 @@ export default antfu(
       'tests',
       'src',
       '*.md',
+      'AGENT.md',
     ],
   },
   {
